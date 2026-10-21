@@ -166,7 +166,7 @@ msgid "Integrity Salt"
 msgstr ""
 
 #: includes/class-jccg-gateway.php:130
-msgid "Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation’s salts."
+msgid "Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation\'s salts."
 msgstr ""
 
 #: includes/class-jccg-gateway.php:134
@@ -222,7 +222,7 @@ msgid "Gateway unavailable: check HTTPS, PKR currency, required PHP extensions, 
 msgstr ""
 
 #: includes/class-jccg-gateway.php:169
-msgid "Saved — leave blank to retain"
+msgid "Saved - leave blank to retain"
 msgstr ""
 
 #: includes/class-jccg-gateway.php:169
@@ -298,7 +298,7 @@ msgid "You will enter your card details on JazzCash."
 msgstr ""
 
 #: includes/class-jccg-gateway.php:382
-msgid "Sandbox test payment — no live payment."
+msgid "Sandbox test payment - no live payment."
 msgstr ""
 
 #: includes/class-jccg-gateway.php:386
