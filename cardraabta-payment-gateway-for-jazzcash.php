@@ -15,15 +15,7 @@
  * Text Domain: cardraabta-payment-gateway-for-jazzcash
  */
 defined( 'ABSPATH' ) || exit;
-register_activation_hook(
-	__FILE__,
-	static function () {
-		if ( is_plugin_active( 'jazzcash-card-gateway/jazzcash-card-gateway.php' ) || is_plugin_active( 'arslan-card-gateway-jazzcash/arslan-card-gateway-jazzcash.php' ) || is_plugin_active( 'payment-gateway-for-jazzcash/payment-gateway-for-jazzcash.php' ) || is_plugin_active( 'cardraabta-jazzcash-payment-gateway-for-woocommerce/cardraabta-jazzcash-payment-gateway-for-woocommerce.php' ) || is_plugin_active( 'cardraabta-payment-gateway-for-jazzcash-and-woocommerce/cardraabta-payment-gateway-for-jazzcash-and-woocommerce.php' ) ) {
-			wp_die( esc_html__( 'Deactivate the previous CardRaabta or JazzCash Card Gateway build before activating this release. Settings and order records are retained.', 'cardraabta-payment-gateway-for-jazzcash' ) );
-		}
-	}
-);
-// A previous private build may be active while WordPress validates this upgrade.
+// Avoid redeclaring plugin classes if this file is loaded more than once.
 if ( defined( 'AGJC_FILE' ) ) {
 	return;
 }
