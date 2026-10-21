@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CardRaabta Payment Gateway for JazzCash
  * Description: Accept JazzCash wallet and debit/credit card payments in WooCommerce, with Sandbox/Live modes, signed callbacks and configurable expiry.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * WC requires at least: 8.3
@@ -20,7 +20,7 @@ if ( defined( 'AGJC_FILE' ) ) {
 	return;
 }
 define( 'AGJC_FILE', __FILE__ );
-define( 'AGJC_VERSION', '1.0.0' );
+define( 'AGJC_VERSION', '1.0.1' );
 add_action(
 	'template_redirect',
 	static function () {

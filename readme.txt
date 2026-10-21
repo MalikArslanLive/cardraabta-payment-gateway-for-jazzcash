@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
 Requires Plugins: woocommerce
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,10 @@ Not in this version. Process refunds through JazzCash and record them in WooComm
 Plugin deletion removes credentials/settings for the current site but retains order accounting records. On multisite, clear settings on each site before network deletion. Deactivation alone retains settings. Constants in wp-config.php must be removed separately.
 
 == Changelog ==
+
+= 1.0.1 =
+* Remove obsolete activation checks for unused plugin identifiers.
+* Retain duplicate-load protection while simplifying plugin initialization.
 
 = 1.0.0 =
 * Initial public release of CardRaabta Payment Gateway for JazzCash.

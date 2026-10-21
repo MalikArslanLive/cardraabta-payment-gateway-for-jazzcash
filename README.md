@@ -1,4 +1,4 @@
-# CardRaabta Payment Gateway for JazzCash — 1.0.0
+# CardRaabta Payment Gateway for JazzCash — 1.0.1
 
 Accept JazzCash Mobile Wallet and debit/credit card payments directly through JazzCash in your WooCommerce store. Includes separate Sandbox and Live settings, 72-hour default expiry, signed payment callbacks, Checkout Blocks and HPOS support.
 

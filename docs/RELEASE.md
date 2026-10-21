@@ -1,6 +1,6 @@
-# Release and merchant acceptance — 1.0.0
+# Release and merchant acceptance — 1.0.1
 
-This document describes the initial public release of **CardRaabta Payment Gateway for JazzCash**. The source in this repository corresponds to the plugin distributed at [WordPress.org](https://wordpress.org/plugins/cardraabta-payment-gateway-for-jazzcash/). Directory publication is not JazzCash merchant certification or proof of live payment acceptance.
+This document describes the maintenance release of **CardRaabta Payment Gateway for JazzCash**. The source in this repository corresponds to the plugin distributed at [WordPress.org](https://wordpress.org/plugins/cardraabta-payment-gateway-for-jazzcash/). Directory publication is not JazzCash merchant certification or proof of live payment acceptance.
 
 ## Installation and configuration
 
@@ -16,7 +16,7 @@ The bundled `includes/ipn.wsdl` is a local SOAP 1.1 service contract served from
 
 ## Source, build and tests
 
-The repository contains the complete readable runtime source, test fixtures, release tooling and CI configuration. The official WordPress.org release uses version `1.0.0`. The GitHub source archive is **not** an installable WordPress plugin package: development files are excluded from the distribution ZIP.
+The repository contains the complete readable runtime source, test fixtures, release tooling and CI configuration. The planned WordPress.org release uses version `1.0.1`. The GitHub source archive is **not** an installable WordPress plugin package: development files are excluded from the distribution ZIP.
 
 Run locally with PHP 8.1+, Node.js and Python 3:
 
@@ -31,7 +31,7 @@ python3 tools/security_scan.py
 python3 tools/build.py
 ```
 
-The builder writes `dist/cardraabta-payment-gateway-for-jazzcash-1.0.0.zip` and prints its SHA-256 checksum. The `dist/` directory is ignored by Git. The GitHub Actions workflow also checks PHP syntax, performs the available synthetic regression tests, builds the ZIP and invokes WordPress Plugin Check.
+The builder writes `dist/cardraabta-payment-gateway-for-jazzcash-1.0.1.zip` and prints its SHA-256 checksum. The `dist/` directory is ignored by Git. The GitHub Actions workflow also checks PHP syntax, performs the available synthetic regression tests, builds the ZIP and invokes WordPress Plugin Check.
 
 For full WordPress/WooCommerce integration checks, run `wp eval-file tests/integration.php` **only on a disposable local installation** with `WP_ENVIRONMENT_TYPE=local`. It modifies settings and creates synthetic products and orders. Do not execute it on a live store.
 
