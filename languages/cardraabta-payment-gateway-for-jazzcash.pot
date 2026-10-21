@@ -166,7 +166,7 @@ msgid "Integrity Salt"
 msgstr ""
 
 #: includes/class-jccg-gateway.php:130
-msgid "Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation\'s salts."
+msgid "Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation's salts."
 msgstr ""
 
 #: includes/class-jccg-gateway.php:134
