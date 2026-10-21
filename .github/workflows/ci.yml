@@ -91,7 +91,7 @@ jobs:
           wp core install --path=/tmp/agjc-wordpress --url=http://localhost --title='Gateway QA' --admin_user=qa --admin_password=qa-password --admin_email=qa@example.test --skip-email
           wp plugin install woocommerce --version=11.2.1 --activate --path=/tmp/agjc-wordpress
           python3 tools/build.py
-          wp plugin install "$PWD/dist/cardraabta-payment-gateway-for-jazzcash-1.0.0.zip" --activate --path=/tmp/agjc-wordpress
+          wp plugin install "$PWD/dist/cardraabta-payment-gateway-for-jazzcash-1.0.1.zip" --activate --path=/tmp/agjc-wordpress
           wp eval 'if ( ! WP_DEBUG || ! class_exists("AGJC_Gateway") || ! isset(WC()->payment_gateways()->payment_gateways()["jccg_wallet"]) ) { throw new RuntimeException("Clean-install gateway check failed"); }' --path=/tmp/agjc-wordpress
           wp eval '$_SERVER["HTTPS"]="on"; $_SERVER["REQUEST_METHOD"]="GET"; $_GET["wsdl"]="1"; (new AGJC_Gateway())->callback(true);' --path=/tmp/agjc-wordpress > /tmp/agjc-wsdl.xml
           python3 -c 'import xml.etree.ElementTree as E; x=E.parse("/tmp/agjc-wsdl.xml"); assert x.getroot().find(".//{http://schemas.xmlsoap.org/wsdl/soap/}address") is not None'
