@@ -1,6 +1,6 @@
 # Security
 
-Version 1.0.0 is the initial public release. No independent penetration-test or provider certification is claimed.
+Version 1.0.1 is the current maintenance release, following the initial public release (1.0.0). It removes obsolete activation-conflict checks for unused plugin identifiers while retaining the duplicate-load guard. This is a compatibility and initialization fix, not a claim of a newly discovered or resolved exploitable security vulnerability. No independent penetration-test or provider certification is claimed.
 
 Do not post real credentials, card details, signed callbacks, customer data or exploitable vulnerability details in public issues. Use the repository's **Security → Report a vulnerability** flow once the owner enables GitHub private vulnerability reporting. If that control is unavailable, contact the repository owner privately to arrange a secure reporting channel before sending details.
 
