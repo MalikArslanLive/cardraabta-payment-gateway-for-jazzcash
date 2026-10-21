@@ -127,7 +127,7 @@ class AGJC_Gateway extends WC_Payment_Gateway {
 				$this->form_fields[ $mode . '_' . $field ] = array(
 					'title'       => $label . ' ' . $name,
 					'type'        => 'secret',
-					'description' => __( 'Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation’s salts.', 'cardraabta-payment-gateway-for-jazzcash' ),
+					'description' => __( 'Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation's salts.', 'cardraabta-payment-gateway-for-jazzcash' ),
 				);
 			}
 			$this->form_fields[ $mode . '_url' ] = array(
@@ -166,7 +166,7 @@ class AGJC_Gateway extends WC_Payment_Gateway {
 
 	public function generate_secret_html( $key, $data ) {
 		$field = $this->get_field_key( $key );
-		return '<tr valign="top"><th scope="row"><label for="' . esc_attr( $field ) . '">' . esc_html( $data['title'] ) . '</label></th><td><input class="input-text regular-input" type="password" autocomplete="new-password" value="" id="' . esc_attr( $field ) . '" name="' . esc_attr( $field ) . '" placeholder="' . ( $this->get_option( $key ) ? esc_attr__( 'Saved — leave blank to retain', 'cardraabta-payment-gateway-for-jazzcash' ) : esc_attr__( 'Not configured', 'cardraabta-payment-gateway-for-jazzcash' ) ) . '"><p class="description">' . esc_html( $data['description'] ) . '</p></td></tr>';
+		return '<tr valign="top"><th scope="row"><label for="' . esc_attr( $field ) . '">' . esc_html( $data['title'] ) . '</label></th><td><input class="input-text regular-input" type="password" autocomplete="new-password" value="" id="' . esc_attr( $field ) . '" name="' . esc_attr( $field ) . '" placeholder="' . ( $this->get_option( $key ) ? esc_attr__( 'Saved - leave blank to retain', 'cardraabta-payment-gateway-for-jazzcash' ) : esc_attr__( 'Not configured', 'cardraabta-payment-gateway-for-jazzcash' ) ) . '"><p class="description">' . esc_html( $data['description'] ) . '</p></td></tr>';
 	}
 
 	public function process_admin_options() {
@@ -379,7 +379,7 @@ class AGJC_Gateway extends WC_Payment_Gateway {
 				echo '<p>' . esc_html__( 'You will enter your card details on JazzCash.', 'cardraabta-payment-gateway-for-jazzcash' ) . '</p>';
 			}
 			if ( $mode === 'sandbox' ) {
-				echo '<p><strong>' . esc_html__( 'Sandbox test payment — no live payment.', 'cardraabta-payment-gateway-for-jazzcash' ) . '</strong></p>'; }
+				echo '<p><strong>' . esc_html__( 'Sandbox test payment - no live payment.', 'cardraabta-payment-gateway-for-jazzcash' ) . '</strong></p>'; }
 			echo '<form method="post" action="' . esc_url( $this->endpoint( $mode ) ) . '" autocomplete="off">';
 			foreach ( $fields as $name => $value ) {
 				echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">'; }
