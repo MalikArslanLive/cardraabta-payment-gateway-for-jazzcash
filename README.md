@@ -1,5 +1,127 @@
-# CardRaabta Payment Gateway for JazzCash
+# CardRaabta Payment Gateway for JazzCash — 1.0.0
 
-Official WordPress.org plugin: https://wordpress.org/plugins/cardraabta-payment-gateway-for-jazzcash/
+Accept JazzCash Mobile Wallet and debit/credit card payments directly through JazzCash in your WooCommerce store. Includes separate Sandbox and Live settings, 72-hour default expiry, signed payment callbacks, Checkout Blocks and HPOS support.
 
-Version 1.0.0 — initial public release.
+Developed by [Malik Arslan](https://malikarslan.com). This is an independent third-party integration, not affiliated with or endorsed by JazzCash or WooCommerce. Use a single active instance of the gateway.
+
+## Download
+
+[Download the official WordPress.org release](https://wordpress.org/plugins/cardraabta-payment-gateway-for-jazzcash/) · [Merchant acceptance checklist](docs/RELEASE.md)
+
+Use the installable ZIP for WordPress. GitHub’s source-code ZIP includes development files. Real JazzCash merchant acceptance remains required before live use.
+
+Source and issue tracking: https://github.com/MalikArslanLive/cardraabta-payment-gateway-for-jazzcash
+
+## Install
+
+1. Back up your store. In WordPress, go to Plugins → Add New, search for **CardRaabta Payment Gateway for JazzCash**, then install and activate. Alternatively, download the official ZIP from WordPress.org and use Upload Plugin.
+2. Open WooCommerce → Settings → Payments → JazzCash Credit / Debit Card.
+3. Select Sandbox. Enter the sandbox Merchant ID, Password and Integrity Salt. Paste the **HTTPS page-redirection payment URL supplied in your JazzCash merchant onboarding profile**. Do not paste a JSON API URL. Live credentials and URL are stored separately.
+4. Copy the exact Return URL from settings into your JazzCash merchant profile. Enable response hashing with JazzCash.
+5. For asynchronous notifications, ask JazzCash to activate signed SOAP IPN, register the IPN URL and its WSDL shown in settings, and confirm its acknowledgement format. This plugin exposes SOAP 1.1 `DoUpdatePaymentStatus` in `http://tempuri.org/`. An arbitrary JSON webhook is not a substitute for this SOAP service.
+6. Leave transaction expiry at **72 hours**, or set a whole number from 1–2160. Both timestamps use Asia/Karachi independently of your WordPress timezone.
+7. Enable the gateway, save settings, and complete the acceptance checks below. After approval, enter Live credentials and URL, switch to Live and perform a small real payment.
+
+Requirements: WordPress 6.5+, WooCommerce 8.3+, PHP 8.1+, OpenSSL, iconv, DOM/XML, MySQL/MariaDB GET_LOCK support, HTTPS and PKR store currency. The callback routes must be public over HTTPS and excluded from caching, CAPTCHA, maintenance-mode and login requirements. HTTPS detection must work correctly behind any reverse proxy.
+
+## Included
+
+- Separate debit/credit card and Mobile Wallet options on classic checkout and Checkout Blocks; payment entry takes place on JazzCash.
+- Separate sandbox/live credentials and merchant-issued URLs; endpoints restricted to the matching JazzCash domain.
+- Password-style, blank-on-render credential controls. Blank retains an existing value; `__CLEAR__` removes it. Values stored in settings are AES-256-GCM encrypted using WordPress salts.
+- HMAC-SHA256 request/response checking, constant-time signature comparison, unique transaction references and exact decimal-to-paisa conversion.
+- Return URL and SOAP IPN validate a persisted attempt before updating its order. Return responses require matching merchant, amount, currency, type and creation timestamp. The documented SOAP input has no amount/currency; its signature, password and transaction timestamp bind it to the saved original request, whose amount must still match the order.
+- Duplicate callback protection, database serialization of updates, and paid/refunded/cancelled order protection. Paid orders cannot be downgraded by later error notifications.
+- WooCommerce order CRUD for HPOS. Minimal logs under WooCommerce → Status → Logs → `cardraabta-payment-gateway-for-jazzcash`.
+
+## JazzCash Mobile Wallet
+
+After JazzCash enables MWALLET on your merchant profile, open WooCommerce → Settings → Payments → **JazzCash Mobile Wallet**, enable it and save. Configure shared credentials, mode, expiry and wallet URLs under **JazzCash Credit / Debit Card** settings. Classic checkout and Checkout Blocks then show **JazzCash Credit / Debit Card** and **JazzCash Mobile Wallet** as distinct payment choices. Each can be enabled independently. Wallet is disabled by default.
+
+Both methods share encrypted merchant credentials, mode, expiry and safe logs. Wallet enable/title/description are stored separately, so WooCommerce settings toggles and REST updates cannot overwrite card controls. Enter the provider-issued sandbox/live **wallet payment URL** if it differs from your card URL. A blank wallet URL uses the existing mode URL; confirm that endpoint supports the wallet profile. Wallet requests follow the documented hosted Mobile Account profile: version 1.1, MWALLET, TBANK and RETL. Cards use the documented version 2.0 MPAY profile.
+
+The payer is redirected to JazzCash to enter wallet details and approve payment on their phone. The plugin does not collect or store wallet numbers, CNIC digits or MPINs. Merchant payment-password visibility in the hosted form remains as documented below; the Integrity Salt stays server-side.
+
+A persisted attempt is bound to its original card/wallet instrument as well as merchant, amount, timestamp and mode. Changing an instrument after an attempt is created requires manual reconciliation; the plugin will not generate another charge attempt. Authenticated callbacks remain accepted for existing attempts even if that checkout method is later disabled.
+
+Before Live use, test a real wallet success, rejection, abandonment, replay, delayed success and provider-sent SOAP notification with your approved merchant profile. The documented SOAP adapter still requires merchant provisioning and acknowledgement acceptance.
+
+## External services
+
+### JazzCash payment processing
+
+This plugin relies on JazzCash, an external payment service, to process debit/credit card and Mobile Wallet payments. A store owner must obtain an approved merchant account, configure dedicated credentials and enable the chosen payment method. Both Sandbox and Live integrations are included; JazzCash service charges and merchant terms apply separately.
+
+When and why data is sent: only when a customer chooses a JazzCash method, opens the order payment page and presses "Continue to JazzCash", their browser POSTs a signed payment request to the merchant-configured JazzCash hosted payment URL. The purpose is to authenticate the merchant, identify the order and process the selected payment. Activation, ordinary browsing and saving settings do not send payment data to JazzCash.
+
+Where data is sent: Sandbox requests go to https://sandbox.jazzcash.com.pk/ and Live requests go to https://payments.jazzcash.com.pk/. The exact page-redirection path is supplied by JazzCash for the merchant. Other hosts, insecure HTTP endpoints and unexpected ports are rejected.
+
+Data sent: merchant ID and dedicated payment password; transaction type/version/language; unique transaction reference; order ID as bill reference, description and merchant-defined field; amount in paisa and PKR currency; creation and expiry timestamps; return URL; and SecureHash signature. Wallet requests also include the bank/product identifiers TBANK/RETL; card requests include the registration flag. The Integrity Salt is never sent. The plugin does not send billing name, email, telephone or postal address, and does not collect card numbers, wallet numbers, CNIC, OTP or MPIN. JazzCash receives browser/IP information and collects the payment details directly on its own hosted page.
+
+Return and IPN: JazzCash sends payment references, response codes, timestamps and authentication fields to this store's public Return URL or SOAP IPN URL. Signed callbacks are verified before updating the related WooCommerce order. The store replies to a valid SOAP notification with a signed acknowledgement containing a response code and padded response message. Invalid notifications receive a generic error. Payment-attempt metadata, status and transaction references are retained with the WooCommerce order. Optional logs contain fixed event codes and order IDs, using WooCommerce log retention. Full payloads and credentials are not logged.
+
+Service and policies (official JazzCash links):
+* Payment gateway service: https://www.jazzcash.com.pk/business/accept-payments/payment-gateway
+* Terms and conditions: https://www.jazzcash.com.pk/tc/
+* Online payment gateway merchant terms (PDF; includes Online Payment Gateway Service Commercial Terms): https://www.jazzcash.com.pk/assets/uploads/2026/04/Overall-Banking-Service-Agreement-BNPL-QR-PGW-MP-standard-format-with-all-service-order-forms.pdf
+* Customer privacy notice (PDF): https://www.jazzcash.com.pk/assets/documents/JazzCash-Privacy-Notice-sep-2026.pdf
+
+Your signed merchant agreement may contain additional obligations. Update your store privacy policy and retention practices accordingly. Suggested customer-facing text is added to WordPress's privacy-policy guide. The plugin does not certify PCI, privacy-law or other legal compliance.
+
+### No other external services
+
+This plugin adds no telemetry, advertising, tracking pixels, externally hosted JavaScript or custom updater. WordPress and WooCommerce are local dependencies. GitHub and documentation links are references for users/developers; the plugin does not fetch code or data from them.
+
+The strings http://schemas.xmlsoap.org/soap/envelope/, http://schemas.xmlsoap.org/wsdl/, http://schemas.xmlsoap.org/wsdl/soap/, http://www.w3.org/2001/XMLSchema and http://tempuri.org/ in PHP/WSDL are XML namespace or SOAP-action identifiers, not external service requests. They must retain their protocol-defined spelling, including http. XML parsing disables network access with LIBXML_NONET and rejects DTD/entity declarations. The WSDL is a bundled local template, with this store's HTTPS IPN address substituted when served.
+
+## Payment and stock behavior
+
+An order stays unpaid until a valid success response (`000`) arrives. Successful sandbox payments update test orders too; use a staging store. Successful payments use WooCommerce `payment_complete()`, which selects Processing or Completed as appropriate and lets WooCommerce manage stock.
+
+For a non-success response the plugin conservatively puts an unpaid order On hold with the provider response code. It does not assume every error means the customer was not charged. Check JazzCash before retrying, cancelling or refunding. No provider message or card data is copied into order notes.
+
+The payment-page expiry is **not** a 72-hour WooCommerce inventory reservation. WooCommerce’s Hold stock (minutes) setting can cancel an unpaid order sooner. If you need a matching hold, configure it to 4320 minutes after considering stock impact. A verified payment for a cancelled/refunded or already-paid order is recorded for manual reconciliation; it will not automatically reopen or fulfil the order. Late authenticated notifications are deliberately not rejected solely because they arrive after the payment expiry.
+
+Reloading an unexpired payment attempt reuses its reference. After its expiry, the plugin blocks another automatic payment attempt to reduce double-charge risk. Expired attempts require manual reconciliation before a new order/payment is created. Changing the mode, amount or merchant for an existing attempt requires review; use a new order after reconciling the old one. Do not rotate credentials while payments are in flight; this version validates with the credentials currently saved for the attempt's original mode.
+
+## Credential security and hosted redirect
+
+JazzCash’s documented card and wallet redirect forms contain `pp_Password`. It is sent in a hidden HTML field and **can be viewed by the customer in the browser source**. A hidden field is not secret storage. The Integrity Salt never leaves the server. Use JazzCash payment credentials only, and confirm this page-redirection profile is approved for your merchant. This plugin does not claim the password is server-only. Server-only credential transmission would require a different JazzCash-approved session/API integration.
+
+Do not enable request-body capture in hosting/APM/security tools on these routes: JazzCash responses can include payment/customer fields. This plugin never logs full payloads, passwords, salts, hashes, card details, customer contact details or callback URLs. Encrypting settings protects database copies; it does not protect against a compromised WordPress server. Keep salts backed up; changing them makes saved encrypted credentials unreadable until re-entered.
+
+Optional wp-config.php constants override stored settings:
+
+```php
+define('AGJC_SANDBOX_MERCHANT_ID', 'your-sandbox-id');
+define('AGJC_SANDBOX_PASSWORD', 'your-sandbox-payment-password');
+define('AGJC_SANDBOX_SALT', 'your-sandbox-integrity-salt');
+// Equivalent live names: AGJC_LIVE_MERCHANT_ID, AGJC_LIVE_PASSWORD, AGJC_LIVE_SALT.
+```
+
+## Acceptance testing before Live
+
+Local verification includes standalone protocol/security tests, a disposable running WordPress/WooCommerce installation using both legacy order storage and HPOS, and HTTP return/SOAP callback tests with synthetic signed messages. Official Plugin Check passed static and runtime checks. These results do **not** verify an actual JazzCash merchant profile, bank authorization or 3DS. See `docs/AUDIT.md` in the source package for evidence and remaining release gates.
+
+- Complete one sandbox success on both classic and block checkout; confirm one stock reduction and correct order status.
+- Compare a generated request hash with JazzCash’s merchant hash calculator; confirm empty-field and character encoding handling for your profile.
+- Test decline, cancellation, expiry, abandoned redirect and a return with a missing/altered signature. A forged callback must never mark an order paid.
+- Send a real signed SOAP IPN from JazzCash with the browser closed. Confirm its fixed-width 3+200+64 character acknowledgement and SOAP action are accepted. Resend it and confirm no duplicate fulfilment/email.
+- Test return plus IPN concurrently, a changed amount/currency, and a delayed success after cancellation.
+- Check HTTPS/caching, WooCommerce stock-hold timing and safe logs. Confirm no real customer orders are created in sandbox.
+- Validate the live endpoint and approved card/3DS configuration with JazzCash; make and reconcile a small live payment.
+
+The supplied WSDL defines the merchant service contract; it must be registered with JazzCash. The public documentation does not establish the provisioning and response-hash byte conventions of every merchant profile. If your onboarding sample differs, obtain that sample and adapt the SOAP adapter before enabling IPN in production. Unsigned notifications are rejected, even if your profile makes hashing optional.
+
+This version does not implement automatic refunds, recurring payments, saved cards, OTC voucher payments or automatic status inquiry. Reconcile unresolved orders and issue refunds in the JazzCash portal. Deactivation retains settings. Plugin deletion removes settings and credentials for the current site while retaining order accounting records. On multisite, remove saved credentials on every site before network deletion. Remove wp-config.php constants separately.
+
+## Development and verification
+
+The GitHub/source package includes `tests/`, `tools/`, CI and audit documentation. The installable plugin ZIP excludes development files. Run `php tests/run.php` from the source checkout. The CLI tests use fake credentials and make no charges. Wallet regressions: `php tests/wallet.php`; Blocks registration: `node tests/blocks.js`. Build the installable ZIP with `python3 tools/build.py`.
+
+Reference documentation consulted 13 October 2026:
+
+- https://sandbox.jazzcash.com.pk/SandboxDocumentation/v4.2/index.html
+- https://sandbox.jazzcash.com.pk/SandboxDocumentation/v4.2/features.html
+- https://sandbox.jazzcash.com.pk/SandboxDocumentation/Content/documentation/Payment%20Gateway%20Integration%20Guide%20for%20Merchants-v4.2.pdf (payment response and status-update sections)
+- https://developer.woocommerce.com/docs/block-development/extensible-blocks/cart-and-checkout-blocks/checkout-payment-methods/payment-method-integration
