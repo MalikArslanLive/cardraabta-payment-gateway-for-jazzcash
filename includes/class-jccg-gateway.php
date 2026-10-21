@@ -127,7 +127,7 @@ class AGJC_Gateway extends WC_Payment_Gateway {
 				$this->form_fields[ $mode . '_' . $field ] = array(
 					'title'       => $label . ' ' . $name,
 					'type'        => 'secret',
-					'description' => __( 'Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation's salts.', 'cardraabta-payment-gateway-for-jazzcash' ),
+					'description' => __( 'Leave blank to retain. Enter __CLEAR__ to remove. Encrypted using this WordPress installation\'s salts.', 'cardraabta-payment-gateway-for-jazzcash' ),
 				);
 			}
 			$this->form_fields[ $mode . '_url' ] = array(
